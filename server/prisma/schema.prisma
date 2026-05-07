@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  Student
+  Vendor
+  Delivery
+}
+
+enum OrderStatus {
+  Pending
+  Confirmed
+  Preparing
+  OutForDelivery
+  Delivered
+  Cancelled
+}
+
+model User {
+  id             String      @id @default(uuid())
+  name           String
+  email          String      @unique
+  password       String
+  phone          String?
+  profilePicUrl  String?
+  role           Role        @default(Student)
+  universityId   String?
+  vendorDescription String?
+  createdAt      DateTime    @default(now())
+
+  // Relations
+  university     University? @relation(fields: [universityId], references: [id])
+  categories     Category[]  // For Vendors
+  ordersPlaced   Order[]     @relation("CustomerOrders")
+  ordersReceived Order[]     @relation("VendorOrders")
+  deliveries     Order[]     @relation("DeliveryOrders")
+}
+
+model University {
+  id       String @id @default(uuid())
+  name     String @unique
+  address  String?
+  city     String?
+  country  String?
+  lat      Float?
+  lng      Float?
+  users    User[]
+}
+
+model Category {
+  id       String     @id @default(uuid())
+  name     String
+  vendorId String
+  vendor   User       @relation(fields: [vendorId], references: [id])
+  items    FoodItem[]
+}
+
+model FoodItem {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  price           Float
+  imageUrl        String?
+  prepTimeMins    Int       @default(15)
+  isCooked        Boolean   @default(true) // true for samosas (toggle), false for chips (count)
+  stock           Int?      // Only used if isCooked is false
+  isVegetarian    Boolean   @default(true)
+  discountPercent Float?
+  discountStart   DateTime?
+  discountEnd     DateTime?
+  
+  categoryId      String
+  category        Category  @relation(fields: [categoryId], references: [id])
+  orderItems      OrderItem[]
+}
+
+model Order {
+  id               String      @id @default(uuid())
+  customerId       String
+  vendorId         String
+  deliveryPersonId String?
+  totalAmount      Float
+  status           OrderStatus @default(Pending)
+  deliveryAddress  String      // e.g., "Hostel B, 3rd Floor, Room 312"
+  isCOD            Boolean     @default(false)
+  paymentReceived  Boolean     @default(false)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  customer         User        @relation("CustomerOrders", fields: [customerId], references: [id])
+  vendor           User        @relation("VendorOrders", fields: [vendorId], references: [id])
+  deliveryPerson   User?       @relation("DeliveryOrders", fields: [deliveryPersonId], references: [id])
+  items            OrderItem[]
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  foodItemId  String
+  quantity    Int
+  priceAtTime Float    // Locks in the price in case it changes later
+
+  order       Order    @relation(fields: [orderId], references: [id])
+  foodItem    FoodItem @relation(fields: [foodItemId], references: [id])
+}

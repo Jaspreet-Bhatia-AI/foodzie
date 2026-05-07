@@ -34,3 +34,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ─── Server (Express/Prisma) ──────────────────────────────────────────────────
+/server/node_modules
+/server/dist
+/server/.env
+!/server/.env.example
+
+# Prisma
+/server/prisma/migrations/.migrate_lock
