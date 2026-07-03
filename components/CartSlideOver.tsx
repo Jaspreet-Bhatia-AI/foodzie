@@ -24,79 +24,46 @@ export function CartSlideOver({ isOpen, onClose }: CartSlideOverProps) {
   
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [showUpiModal, setShowUpiModal] = useState(false);
 
   const cartItems = Object.values(cart);
   const total = getTotalPrice();
 
   const handleCheckout = async () => {
     if (cartItems.length === 0 || !vendorId) return;
-    
-    setIsProcessing(true);
-    
-    try {
-      // 1. Load Razorpay script
-      const resLoad = await loadRazorpayScript();
-      if (!resLoad) {
-        alert('Razorpay SDK failed to load. Are you online?');
-        setIsProcessing(false);
-        return;
-      }
+    setShowUpiModal(true);
+  };
 
-      // 2. Prepare items for API
+  const confirmUpiOrder = async () => {
+    setIsProcessing(true);
+    try {
       const itemsPayload = cartItems.map(item => ({
         foodItemId: item.id,
         quantity: item.quantity,
         priceAtTime: item.discount ? item.discount.effectivePrice : item.price,
       }));
 
-      // 3. Call backend to create Order
-      const res = await api.post<{ razorpayOrderId: string; foodzieOrderId: string; amount: number; currency: string; }>('/api/orders', {
+      // Call backend to create Order directly (using isCOD: true to bypass Razorpay check and place immediately)
+      const res = await api.post<{ success: boolean; foodzieOrderId: string }>('/api/orders', {
         vendorId,
         items: itemsPayload,
         totalAmount: total,
         deliveryAddress: "Hostel A, Room 101", // Placeholder
+        isCOD: true
       });
 
-      // 4. Initialize Razorpay Checkout
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_placeholder',
-        amount: res.amount,
-        currency: res.currency,
-        name: 'Foodzie',
-        description: 'Campus Food Delivery',
-        order_id: res.razorpayOrderId,
-        handler: function (response: any) {
-          console.log('✅ Payment successful!', response);
-          setOrderSuccess(true);
-          clearCart();
-          setTimeout(() => {
-            setOrderSuccess(false);
-            onClose();
-            router.push('/shop/orders');
-          }, 2000);
-        },
-        prefill: {
-          name: 'Student Name',
-          email: 'student@example.com',
-          contact: '9999999999'
-        },
-        theme: {
-          color: '#f97316'
-        }
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      
-      rzp.on('payment.failed', function (response: any) {
-        console.error('Payment Failed', response.error);
-        alert('Payment Failed: ' + response.error.description);
-      });
-
-      rzp.open();
-
+      console.log('✅ Order placed via UPI!', res);
+      setOrderSuccess(true);
+      clearCart();
+      setShowUpiModal(false);
+      setTimeout(() => {
+        setOrderSuccess(false);
+        onClose();
+        router.push('/shop/orders');
+      }, 2000);
     } catch (err) {
-      console.error('Failed to checkout:', err);
-      alert('Failed to process order. Please try again.');
+      console.error('Failed to place order:', err);
+      alert('Failed to place order. Please try again.');
     } finally {
       setIsProcessing(false);
     }
@@ -225,6 +192,73 @@ export function CartSlideOver({ isOpen, onClose }: CartSlideOverProps) {
           </div>
         )}
       </div>
+
+      {showUpiModal && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[99] flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl p-6 max-w-sm w-full space-y-6 text-center shadow-2xl relative">
+            <button 
+              onClick={() => setShowUpiModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-1">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white">Pay via GPay / UPI</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Scan code or pay directly from your app</p>
+            </div>
+
+            {/* UPI Details */}
+            <div className="space-y-4">
+              <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/50 p-4 rounded-2xl flex flex-col items-center">
+                <span className="text-xs text-orange-600 dark:text-orange-400 font-semibold uppercase tracking-wider">Amount to Pay</span>
+                <span className="text-3xl font-black text-orange-500">₹{total.toFixed(2)}</span>
+              </div>
+
+              {/* QR Code */}
+              <div className="bg-white p-3 rounded-2xl inline-block border border-gray-100 shadow-sm">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=bhatiajaspreet161@oksbi&pn=Foodzie&am=${total.toFixed(2)}&cu=INR`)}`} 
+                  alt="UPI QR Code" 
+                  className="w-44 h-44"
+                />
+              </div>
+
+              <div className="text-sm space-y-2">
+                <p className="text-gray-500 dark:text-gray-400">Recipient UPI Address:</p>
+                <p className="font-mono font-bold text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-xl break-all">
+                  bhatiajaspreet161@oksbi
+                </p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-2 pt-2">
+              <a 
+                href={`upi://pay?pa=bhatiajaspreet161@oksbi&pn=Foodzie&am=${total.toFixed(2)}&cu=INR`}
+                className="w-full flex items-center justify-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-orange-500/20 md:hidden"
+              >
+                Pay via Mobile App
+              </a>
+
+              <button 
+                onClick={confirmUpiOrder}
+                disabled={isProcessing}
+                className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-600/70 text-white font-bold py-3.5 rounded-xl transition-colors shadow-lg shadow-green-600/20"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Completing Order...
+                  </>
+                ) : (
+                  "I Have Paid (Complete Order)"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

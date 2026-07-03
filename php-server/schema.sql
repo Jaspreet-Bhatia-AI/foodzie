@@ -33,6 +33,7 @@ CREATE TABLE `User` (
     `role` ENUM('Student', 'Vendor', 'Delivery') NOT NULL DEFAULT 'Student',
     `universityId` VARCHAR(36) NULL,
     `vendorDescription` TEXT NULL,
+    `vendorUpi` VARCHAR(255) NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     PRIMARY KEY (`id`),
     FOREIGN KEY (`universityId`) REFERENCES `University`(`id`) ON DELETE SET NULL

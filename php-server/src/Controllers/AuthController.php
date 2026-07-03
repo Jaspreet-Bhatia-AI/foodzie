@@ -151,7 +151,8 @@ class AuthController {
             "role" => $profile['role'],
             "universityId" => $profile['universityId'],
             "universityName" => $profile['universityName'],
-            "vendorDescription" => $profile['vendorDescription']
+            "vendorDescription" => $profile['vendorDescription'],
+            "vendorUpi" => $profile['vendorUpi']
         ]);
     }
 
@@ -161,6 +162,7 @@ class AuthController {
         $phone = $body['phone'] ?? null;
         $universityName = $body['universityName'] ?? null;
         $vendorDescription = $body['vendorDescription'] ?? null;
+        $vendorUpi = $body['vendorUpi'] ?? null;
 
         $universityId = null;
         if ($universityName) {
@@ -191,9 +193,10 @@ class AuthController {
         $finalPhone = $phone !== null ? $phone : $current['phone'];
         $finalUniId = $universityName !== null ? $universityId : $current['universityId'];
         $finalDesc = $vendorDescription !== null ? $vendorDescription : $current['vendorDescription'];
+        $finalUpi = $vendorUpi !== null ? $vendorUpi : $current['vendorUpi'];
 
-        $update = $this->db->prepare("UPDATE User SET name = ?, phone = ?, universityId = ?, vendorDescription = ? WHERE id = ?");
-        $update->execute([$finalName, $finalPhone, $finalUniId, $finalDesc, $userId]);
+        $update = $this->db->prepare("UPDATE User SET name = ?, phone = ?, universityId = ?, vendorDescription = ?, vendorUpi = ? WHERE id = ?");
+        $update->execute([$finalName, $finalPhone, $finalUniId, $finalDesc, $finalUpi, $userId]);
 
         // Get updated details
         $stmt = $this->db->prepare("SELECT u.*, uni.name as universityName FROM User u LEFT JOIN University uni ON u.universityId = uni.id WHERE u.id = ?");
@@ -208,7 +211,8 @@ class AuthController {
             "role" => $updated['role'],
             "universityId" => $updated['universityId'],
             "universityName" => $updated['universityName'],
-            "vendorDescription" => $updated['vendorDescription']
+            "vendorDescription" => $updated['vendorDescription'],
+            "vendorUpi" => $updated['vendorUpi']
         ]);
     }
 }

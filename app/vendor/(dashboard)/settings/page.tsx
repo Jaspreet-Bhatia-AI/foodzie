@@ -22,6 +22,7 @@ interface VendorData {
   phone: string | null;
   universityName: string | null;
   vendorDescription: string | null;
+  vendorUpi: string | null;
 }
 
 interface Stats {
@@ -38,7 +39,8 @@ export default function VendorSettingsPage() {
     name: '',
     phone: '',
     universityName: '',
-    vendorDescription: ''
+    vendorDescription: '',
+    vendorUpi: ''
   });
 
   const fetchData = useCallback(async () => {
@@ -53,7 +55,8 @@ export default function VendorSettingsPage() {
         name: user.name,
         phone: user.phone || '',
         universityName: user.universityName || '',
-        vendorDescription: user.vendorDescription || ''
+        vendorDescription: user.vendorDescription || '',
+        vendorUpi: user.vendorUpi || ''
       });
     } catch (err) {
       console.error('Failed to fetch settings:', err);
@@ -158,6 +161,20 @@ export default function VendorSettingsPage() {
               placeholder="Greenfield Institute"
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-orange-500" /> UPI ID for Payouts
+            </label>
+            <input 
+              type="text" 
+              value={form.vendorUpi}
+              onChange={(e) => setForm({ ...form, vendorUpi: e.target.value })}
+              className="w-full bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+              placeholder="merchant@oksbi"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400">Provide your GPay/UPI address where the administrator will send your monthly canteen payouts.</p>
           </div>
 
           <div className="space-y-2">
