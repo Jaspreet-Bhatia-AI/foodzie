@@ -66,7 +66,15 @@ async function request<T>(
 
   if (isRaw) return res as unknown as T;
 
-  const data = await res.json();
+  let data: any = null;
+  const contentType = res.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    try {
+      data = await res.json();
+    } catch (e) {
+      console.warn("[API] Failed to parse JSON response");
+    }
+  }
 
   if (!res.ok) {
     // Surface the server's error message when available
