@@ -245,6 +245,6 @@ try {
     // Route Not Found
     Response::error("Route not found", 404);
 
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     Response::error($e->getMessage(), 500);
 }
