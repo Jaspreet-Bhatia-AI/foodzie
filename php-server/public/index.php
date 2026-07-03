@@ -56,7 +56,7 @@ function matchRoute(string $method, string $pathPattern, string $requestMethod, 
         return false;
     }
     // Convert e.g. /api/menu/:id to regex /api/menu/([^/]+)
-    $pattern = '@^' . preg_replace('/:([^/]+)/', '([^/]+)', $pathPattern) . '$@';
+    $pattern = '@^' . preg_replace('@:([^/]+)@', '([^/]+)', $pathPattern) . '$@';
     return preg_match($pattern, $uriPath, $matches) === 1;
 }
 
