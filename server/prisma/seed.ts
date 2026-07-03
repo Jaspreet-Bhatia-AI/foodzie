@@ -1,5 +1,20 @@
-import { PrismaClient, Role, OrderStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
+
+const Role = {
+  Student: 'Student',
+  Vendor: 'Vendor',
+  Delivery: 'Delivery'
+} as const;
+
+const OrderStatus = {
+  Pending: 'Pending',
+  Confirmed: 'Confirmed',
+  Preparing: 'Preparing',
+  OutForDelivery: 'OutForDelivery',
+  Delivered: 'Delivered',
+  Cancelled: 'Cancelled'
+} as const;
 
 const prisma = new PrismaClient();
 
@@ -984,6 +999,34 @@ async function main() {
         });
       }
     }
+  }
+
+  // 1.5. Seed Students
+  console.log('Seeding student users...');
+  const studentEmails = [
+    'student1@foodzie.com',
+    'student2@foodzie.com',
+    'student3@foodzie.com',
+    'student4@foodzie.com',
+    'student5@foodzie.com'
+  ];
+  for (let i = 0; i < studentEmails.length; i++) {
+    const email = studentEmails[i];
+    const uniId = unis[i % unis.length].id;
+    await prisma.user.upsert({
+      where: { email },
+      update: {
+        name: `Student ${i + 1}`,
+        universityId: uniId,
+      },
+      create: {
+        name: `Student ${i + 1}`,
+        email,
+        password: hashedPassword,
+        role: Role.Student,
+        universityId: uniId,
+      },
+    });
   }
 
   // 2. Generate small order history

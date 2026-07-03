@@ -3,24 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
-
-enum Role {
-  Student
-  Vendor
-  Delivery
-}
-
-enum OrderStatus {
-  Pending
-  Confirmed
-  Preparing
-  OutForDelivery
-  Delivered
-  Cancelled
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -30,7 +14,7 @@ model User {
   password       String
   phone          String?
   profilePicUrl  String?
-  role           Role        @default(Student)
+  role           String      @default("Student")
   universityId   String?
   vendorDescription String?
   createdAt      DateTime    @default(now())
@@ -87,7 +71,7 @@ model Order {
   vendorId         String
   deliveryPersonId String?
   totalAmount      Float
-  status           OrderStatus @default(Pending)
+  status           String      @default("Pending")
   deliveryAddress  String      // e.g., "Hostel B, 3rd Floor, Room 312"
   isCOD            Boolean     @default(false)
   paymentReceived  Boolean     @default(false)

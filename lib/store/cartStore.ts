@@ -10,6 +10,7 @@ export interface FoodItem {
   prepTimeMins: number;
   isCooked: boolean;
   stock: number;
+  isVegetarian: boolean;
   discount: {
     percent: number;
     validFrom: string;
