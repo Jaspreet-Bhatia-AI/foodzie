@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f9fafb; /* gray-50 */
+  --foreground: #030712; /* gray-950 */
+}
+
+.dark {
+  --background: #030712; /* gray-950 */
+  --foreground: #f9fafb; /* gray-50 */
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+input, textarea, select {
+  color: inherit;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Light Mode Overrides for Hardcoded Dark Theme Utility Classes */
+html:not(.dark) body {
+  background-color: #f9fafb !important;
+  color: #111827 !important;
+}
+
+html:not(.dark) .bg-gray-950 {
+  background-color: #f9fafb !important;
+}
+
+html:not(.dark) .bg-gray-900 {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) .bg-gray-955 {
+  background-color: #f3f4f6 !important;
+}
+
+html:not(.dark) .bg-gray-955\/50 {
+  background-color: rgba(243, 244, 246, 0.5) !important;
+}
+
+html:not(.dark) .bg-gray-900\/40 {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+html:not(.dark) .bg-gray-950\/10 {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+html:not(.dark) .bg-gray-950\/85 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+html:not(.dark) .bg-gray-950\/50 {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+html:not(.dark) .border-gray-800,
+html:not(.dark) .border-gray-850,
+html:not(.dark) .border-gray-900 {
+  border-color: #e5e7eb !important;
+}
+
+html:not(.dark) .border-gray-855 {
+  border-color: #d1d5db !important;
+}
+
+html:not(.dark) .text-white {
+  color: #111827 !important;
+}
+
+html:not(.dark) .text-gray-300,
+html:not(.dark) .text-gray-400,
+html:not(.dark) .text-gray-500,
+html:not(.dark) .text-gray-550,
+html:not(.dark) .text-gray-555,
+html:not(.dark) .text-gray-650 {
+  color: #111827 !important;
+}
+
+html:not(.dark) .hover\:text-white:hover {
+  color: #111827 !important;
+}
+
+html:not(.dark) .bg-gray-950\/35 {
+  background-color: rgba(243, 244, 246, 0.35) !important;
+}
+
+html:not(.dark) .bg-gray-800 {
+  background-color: #e5e7eb !important;
+}
+
+html:not(.dark) .hover\:bg-gray-700:hover {
+  background-color: #d1d5db !important;
+}
+
+html:not(.dark) .hover\:bg-gray-955\/50:hover {
+  background-color: rgba(243, 244, 246, 0.8) !important;
+}
+
+/* Flowing Reviews Marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite reverse;
+}
+
+.animate-marquee:hover, .animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Theme Visibility Rules for Dark Mode */
+.dark .text-gray-300 {
+  color: #f3f4f6 !important; /* bright silver-white (gray-100) */
+}
+
+.dark .text-gray-400 {
+  color: #e5e7eb !important; /* clean light silver (gray-200) */
+}
+
+.dark .text-gray-555,
+.dark .text-gray-500,
+.dark .text-gray-550 {
+  color: #d1d5db !important; /* clean gray (gray-300) */
+}
+
+.dark .text-gray-650 {
+  color: #9ca3af !important; /* soft readable gray (gray-400) */
+}
+
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-900 {
+  color: #f9fafb !important; /* soft white for primary elements to reduce eye strain */
+}
+
+
+
+/* Retain white text for filled action buttons and status badges (Both Modes) */
+.bg-orange-500,
+.bg-orange-500 *,
+.bg-orange-600,
+.bg-orange-600 *,
+.bg-red-500,
+.bg-red-500 *,
+.bg-green-500,
+.bg-green-500 *,
+.bg-indigo-500,
+.bg-indigo-500 * {
+  color: #ffffff !important;
+}
+
+.dark .bg-gray-900,
+.dark .bg-gray-900 * {
+  color: #ffffff !important;
+}
+
+/* Retain orange/accent text highlights */
+.dark .text-orange-500,
+.dark .text-orange-500 *,
+.dark .text-orange-600,
+.dark .text-orange-600 * {
+  color: #f97316 !important;
+}
