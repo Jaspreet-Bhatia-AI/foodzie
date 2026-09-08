@@ -5,8 +5,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { initSocket } from "./lib/socket";
 
-// ─── Load environment variables ───────────────────────────────────────────────
-dotenv.config();
+import path from "path";
+dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 // ─── Route Imports ────────────────────────────────────────────────────────────
 import authRouter from "./routes/auth.routes";

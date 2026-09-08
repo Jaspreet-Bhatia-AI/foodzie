@@ -5,12 +5,12 @@
   "author": "Jaspreet Bhatia",
   "description": "Foodzie — a campus food-ordering platform",
   "scripts": {
-    "dev": "next dev",
-    "dev:frontend": "next dev",
-    "dev:backend": "cd server && npm run dev",
+    "dev": "npx dotenv-cli -e ../.env -- next dev",
+    "dev:frontend": "npx dotenv-cli -e ../.env -- next dev",
+    "dev:backend": "cd ../backend && npm run dev",
     "dev:all": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
-    "build": "next build",
-    "start": "next start",
+    "build": "npx dotenv-cli -e ../.env -- next build",
+    "start": "npx dotenv-cli -e ../.env -- next start",
     "lint": "next lint"
   },
   "dependencies": {

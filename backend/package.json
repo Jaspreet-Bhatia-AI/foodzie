@@ -5,12 +5,12 @@
   "author": "Jaspreet Bhatia",
   "private": true,
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev": "npx dotenv-cli -e ../.env -- ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "start": "npx dotenv-cli -e ../.env -- node dist/index.js",
+    "prisma:generate": "npx dotenv-cli -e ../.env -- prisma generate",
+    "prisma:migrate": "npx dotenv-cli -e ../.env -- prisma migrate dev",
+    "prisma:studio": "npx dotenv-cli -e ../.env -- prisma studio"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

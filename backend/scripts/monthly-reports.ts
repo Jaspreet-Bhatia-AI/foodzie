@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
-dotenv.config();
+import path from 'path';
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const prisma = new PrismaClient();
 const resend = new Resend(process.env.RESEND_API_KEY);
